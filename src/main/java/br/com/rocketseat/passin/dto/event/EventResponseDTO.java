@@ -1,7 +1,9 @@
 package br.com.rocketseat.passin.dto.event;
 
 import br.com.rocketseat.passin.domain.event.Event;
+import lombok.Getter;
 
+@Getter
 public class EventResponseDTO {
 
     EventDetailsDTO event;
@@ -16,5 +18,4 @@ public class EventResponseDTO {
                 numberOfAttendees
         );
     }
-
 }
