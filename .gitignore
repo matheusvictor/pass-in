@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### HyperSQL database disk-based ###
+/src/main/resources/database/myDb.lck
+/src/main/resources/database/myDb.log
+/src/main/resources/database/myDb.properties
+/src/main/resources/database/myDb.script
