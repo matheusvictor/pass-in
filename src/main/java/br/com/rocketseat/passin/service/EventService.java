@@ -26,9 +26,7 @@ public class EventService {
 
     public EventResponseDTO getEventDetails(String eventId) {
 
-        var event = eventRepository
-                .findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException(String.format("Event with ID %s not found", eventId)));
+        var event = getEventById(eventId);
         var attendeeList = attendeeService.getAllAttendeesFromEvent(eventId);
 
         return new EventResponseDTO(event, attendeeList.size());
@@ -47,22 +45,10 @@ public class EventService {
         return new EventIdDTO(newEvent.getId());
     }
 
-    private String generateSlug(String text) {
-        var normalized = Normalizer.normalize(text, Normalizer.Form.NFD);
-
-        return normalized
-                .replaceAll("\\p{InCOMBINING_DIACRITICAL_MARKS}", "")
-                .replaceAll("[^\\w\\s]", "")
-                .replaceAll("\\s+", "-")
-                .toLowerCase();
-    }
-
     public AttendeeIdDTO registerAttendee(String eventId, AttendeeRequestDTO attendeeDTO) {
         attendeeService.verifyAttendeeSubscription(attendeeDTO.email(), eventId);
 
-        var event = eventRepository
-                .findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException(String.format("Event with ID %s not found", eventId)));
+        var event = getEventById(eventId);
 
         var attendeeList = attendeeService.getAllAttendeesFromEvent(eventId);
 
@@ -78,5 +64,21 @@ public class EventService {
 
         attendeeService.registerAttendee(newAttendee);
         return new AttendeeIdDTO(newAttendee.getId());
+    }
+
+    private String generateSlug(String text) {
+        var normalized = Normalizer.normalize(text, Normalizer.Form.NFD);
+
+        return normalized
+                .replaceAll("\\p{InCOMBINING_DIACRITICAL_MARKS}", "")
+                .replaceAll("[^\\w\\s]", "")
+                .replaceAll("\\s+", "-")
+                .toLowerCase();
+    }
+
+    private Event getEventById(String eventId) {
+        return eventRepository
+                .findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException(String.format("Event with ID %s not found", eventId)));
     }
 }
