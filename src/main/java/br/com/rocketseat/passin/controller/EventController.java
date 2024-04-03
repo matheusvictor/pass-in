@@ -1,8 +1,10 @@
 package br.com.rocketseat.passin.controller;
 
+import br.com.rocketseat.passin.dto.attendee.AttendeeListResponseDTO;
 import br.com.rocketseat.passin.dto.event.EventIdDTO;
 import br.com.rocketseat.passin.dto.event.EventRequestDTO;
 import br.com.rocketseat.passin.dto.event.EventResponseDTO;
+import br.com.rocketseat.passin.service.AttendeeService;
 import br.com.rocketseat.passin.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class EventController {
 
     private final EventService eventService;
+    private final AttendeeService attendeeService;
 
     @GetMapping
     public String helloEvents() {
@@ -26,6 +29,12 @@ public class EventController {
     public ResponseEntity<EventResponseDTO> getEventById(@PathVariable String id) {
         var event = eventService.getEventDetails(id);
         return ResponseEntity.ok(event);
+    }
+
+    @GetMapping("/attendees/{id}")
+    public ResponseEntity<AttendeeListResponseDTO> getEventAttendees(@PathVariable String id) {
+        var attendees = attendeeService.getEventsAttendee(id);
+        return ResponseEntity.ok(attendees);
     }
 
     @PostMapping
