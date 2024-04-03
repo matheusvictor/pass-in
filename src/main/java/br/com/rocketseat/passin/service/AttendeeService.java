@@ -1,6 +1,7 @@
 package br.com.rocketseat.passin.service;
 
 import br.com.rocketseat.passin.domain.attendees.Attendee;
+import br.com.rocketseat.passin.domain.attendees.exception.AttendeeAlreadyExistsException;
 import br.com.rocketseat.passin.domain.checkin.CheckIn;
 import br.com.rocketseat.passin.dto.attendee.AttendeeDetailsDTO;
 import br.com.rocketseat.passin.dto.attendee.AttendeeListResponseDTO;
@@ -43,5 +44,17 @@ public class AttendeeService {
                 }).toList();
 
         return new AttendeeListResponseDTO(attendeeDetailsList);
+    }
+
+    public Attendee registerAttendee(Attendee attendee) {
+        return attendeeRepository.save(attendee);
+    }
+
+    public void verifyAttendeeSubscription(String email, String eventId) {
+        var attendeeRegistered = attendeeRepository.findAllByEmailAndEventId(email, eventId);
+
+        if (attendeeRegistered.isPresent()) {
+            throw new AttendeeAlreadyExistsException("Attendee already registered");
+        }
     }
 }
