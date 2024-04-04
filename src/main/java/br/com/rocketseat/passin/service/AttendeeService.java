@@ -3,26 +3,23 @@ package br.com.rocketseat.passin.service;
 import br.com.rocketseat.passin.domain.attendees.Attendee;
 import br.com.rocketseat.passin.domain.attendees.exception.AttendeeAlreadyExistsException;
 import br.com.rocketseat.passin.domain.attendees.exception.AttendeeNotFoundException;
-import br.com.rocketseat.passin.domain.checkin.CheckIn;
 import br.com.rocketseat.passin.dto.attendee.AttendeeBadgeDTO;
 import br.com.rocketseat.passin.dto.attendee.AttendeeBadgeResponseDTO;
 import br.com.rocketseat.passin.dto.attendee.AttendeeDetailsDTO;
 import br.com.rocketseat.passin.dto.attendee.AttendeeListResponseDTO;
 import br.com.rocketseat.passin.repository.AttendeeRepository;
-import br.com.rocketseat.passin.repository.CheckInRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AttendeeService {
 
+    private final CheckInService checkInService;
     private final AttendeeRepository attendeeRepository;
-    private final CheckInRepository checkInRepository;
 
     public List<Attendee> getAllAttendeesFromEvent(String eventId) {
         return attendeeRepository.findAllByEventId(eventId);
@@ -35,7 +32,7 @@ public class AttendeeService {
                 .stream()
                 .map(attendee -> {
 
-                    Optional<CheckIn> checkIn = checkInRepository.findByAttendeeId(attendee.getId());
+                    var checkIn = checkInService.getCheckInByAttendeeId(attendee.getId());
                     var checkedInAt = checkIn.isPresent() ? checkIn.get().getCreatedAt() : null;
 
                     return new AttendeeDetailsDTO(
@@ -54,9 +51,7 @@ public class AttendeeService {
             String attendeeId,
             UriComponentsBuilder uriComponentsBuilder
     ) {
-        var attendee = attendeeRepository
-                .findById(attendeeId)
-                .orElseThrow(() -> new AttendeeNotFoundException("Attendee not found"));
+        var attendee = this.getAttendeeById(attendeeId);
 
         var checkInUri = uriComponentsBuilder
                 .path("/attendees/{attendeeId}/check-in")
@@ -83,5 +78,16 @@ public class AttendeeService {
         if (attendeeRegistered.isPresent()) {
             throw new AttendeeAlreadyExistsException("Attendee already registered");
         }
+    }
+
+    public void doCheckIn(String attendeeId) {
+        var attendee = getAttendeeById(attendeeId);
+        checkInService.doCheckInAttendee(attendee);
+    }
+
+    private Attendee getAttendeeById(String attendeeId) {
+        return attendeeRepository
+                .findById(attendeeId)
+                .orElseThrow(() -> new AttendeeNotFoundException("Attendee not found"));
     }
 }

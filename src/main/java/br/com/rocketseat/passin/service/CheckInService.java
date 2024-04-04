@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,10 +28,14 @@ public class CheckInService {
     }
 
     private void checkIfAttendeeAlreadyCheckedIn(String attendeeId) {
-        var checkIn = checkInRepository.findByAttendeeId(attendeeId);
+        var checkIn = this.getCheckInByAttendeeId(attendeeId);
 
         if (checkIn.isPresent()) {
             throw new CheckInAlreadyExistsException("Attendee already checked in");
         }
+    }
+
+    public Optional<CheckIn> getCheckInByAttendeeId(String attendeeId) {
+        return checkInRepository.findByAttendeeId(attendeeId);
     }
 }

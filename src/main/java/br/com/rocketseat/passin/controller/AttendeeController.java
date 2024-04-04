@@ -1,14 +1,12 @@
 package br.com.rocketseat.passin.controller;
 
 import br.com.rocketseat.passin.dto.attendee.AttendeeBadgeResponseDTO;
+import br.com.rocketseat.passin.dto.checkin.CheckInResponseDTO;
 import br.com.rocketseat.passin.service.AttendeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 
@@ -33,5 +31,22 @@ public class AttendeeController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
+    }
+
+    @PostMapping("/{attendeeId}/check-in")
+    public ResponseEntity<CheckInResponseDTO> doCheckIn(
+            @PathVariable String attendeeId,
+            UriComponentsBuilder uriComponentsBuilder
+    ) {
+        attendeeService.doCheckIn(attendeeId);
+
+        var checkInUri = uriComponentsBuilder
+                .path("/attendees/{attendeeId}/badge")
+                .buildAndExpand(attendeeId)
+                .toUri();
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new CheckInResponseDTO(checkInUri));
     }
 }
