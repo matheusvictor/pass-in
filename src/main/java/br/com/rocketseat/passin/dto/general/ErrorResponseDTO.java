@@ -1,4 +1,4 @@
-package br.com.rocketseat.passin.dto.error;
+package br.com.rocketseat.passin.dto.general;
 
 public record ErrorResponseDTO(String message) {
 }
