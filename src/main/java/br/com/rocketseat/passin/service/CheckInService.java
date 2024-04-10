@@ -2,7 +2,7 @@ package br.com.rocketseat.passin.service;
 
 import br.com.rocketseat.passin.domain.attendees.Attendee;
 import br.com.rocketseat.passin.domain.checkin.CheckIn;
-import br.com.rocketseat.passin.domain.checkin.CheckInAlreadyExistsException;
+import br.com.rocketseat.passin.domain.checkin.exception.CheckInAlreadyExistsException;
 import br.com.rocketseat.passin.repository.CheckInRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

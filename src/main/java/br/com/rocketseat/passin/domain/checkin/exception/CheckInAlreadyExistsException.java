@@ -1,4 +1,4 @@
-package br.com.rocketseat.passin.domain.checkin;
+package br.com.rocketseat.passin.domain.checkin.exception;
 
 public class CheckInAlreadyExistsException extends RuntimeException {
 
