@@ -6,6 +6,7 @@ import br.com.rocketseat.passin.domain.checkin.exception.CheckInAlreadyExistsExc
 import br.com.rocketseat.passin.domain.event.exception.EventAlreadyExistsException;
 import br.com.rocketseat.passin.domain.event.exception.EventFullException;
 import br.com.rocketseat.passin.domain.event.exception.EventNotFoundException;
+import br.com.rocketseat.passin.domain.event.exception.EventRequestRequiredException;
 import br.com.rocketseat.passin.dto.general.ErrorResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice // Captura as exceções lançadas pelos controllers
 public class ExceptionEntityHandler {
+
+    @ExceptionHandler(EventRequestRequiredException.class)
+    public ResponseEntity<ErrorResponseDTO> handleEventRequest(EventRequestRequiredException e) {
+        return ResponseEntity
+                .badRequest()
+                .body(new ErrorResponseDTO(e.getMessage()));
+    }
 
     @ExceptionHandler(EventNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> handleEventNotFound(EventNotFoundException e) {
